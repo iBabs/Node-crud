@@ -8,6 +8,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 const PORT = 4190
+const HOST = '0.0.0.0'
 
 const app = express()
 
@@ -28,7 +29,7 @@ app.all('*', (req, res)=>{
 
 mongoose.connect(process.env.MONGO_URL)
 .then(()=>{
-    app.listen(PORT,()=>{
+    app.listen(PORT,HOST,()=>{
         console.log('We are listening at '+PORT)
     })
     console.log('connected to db')
