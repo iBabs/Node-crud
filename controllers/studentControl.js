@@ -1,22 +1,22 @@
 import { v4 as uuid } from 'uuid'
-import Student from '../models/userData.js'
+import Student from '../models/studentData.js'
 import mongoose from 'mongoose'
 
 let users = []
 
 
 // get all users// student
-export const getUser = async (req, res) => {
+export const getStudent = async (req, res) => {
 
     const students = await Student.find({}).sort({ createdAt: -1 })
 
     res.status(200).json(students)
 }
-// create user
-export const postUser = async (req, res) => {
+// create Student
+export const postStudent = async (req, res) => {
     const { name, level, email } = req.body
 
-    // users.push({...user, id:uuid()})
+    // users.push({...Student, id:uuid()})
     try {
         const student = await Student.create({ name, level, email })
 
@@ -26,48 +26,48 @@ export const postUser = async (req, res) => {
     }
 }
 
-//get single user
+//get single Student
 
-export const singleUser = async (req, res) => {
+export const singleStudent = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: `user doesn't exist` })
+        return res.status(404).json({ error: `Student doesn't exist` })
     }
     const student = await Student.findById(id)
 
     if (!student) {
-        return res.status(404).json({ error: `user doesn't exist` })
+        return res.status(404).json({ error: `Student doesn't exist` })
     }
 
 
     res.json(student)
 }
 
-export const deleteUser = async (req, res) => {
+export const deleteStudent = async (req, res) => {
     const { id } = req.params
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: `user doesn't exist` })
+        return res.status(404).json({ error: `Student doesn't exist` })
     }
 
     const student = await Student.findByIdAndDelete({ _id: id })
     if (!student) {
-        return res.status(404).json({ error: `user doesn't exist` })
+        return res.status(404).json({ error: `Student doesn't exist` })
     }
-    res.status(200).send('User deleted')
+    res.status(200).send('Student deleted')
 }
 
-export const editUser = async (req, res) => {
+export const editStudent = async (req, res) => {
     const { id } = req.params
     if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(404).json({ error: `user doesn't exist` })
+        return res.status(404).json({ error: `Student doesn't exist` })
     }
 
     const student = await Student.findByIdAndUpdate({ _id: id }, { ...req.body })
 
     if (!student) {
-        return res.status(404).json({ error: `user doesn't exist` })
+        return res.status(404).json({ error: `Student doesn't exist` })
     }
     res.status(200).json(student)
 }
