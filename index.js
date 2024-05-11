@@ -1,7 +1,7 @@
 import express from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
-import router from './routes/user.js'
+import router from './routes/student.js'
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 
