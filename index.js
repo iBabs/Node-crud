@@ -6,7 +6,7 @@ import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 
 dotenv.config()
-
+//trying something
 const PORT = 4190
 const HOST = '0.0.0.0'
 
