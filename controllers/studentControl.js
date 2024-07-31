@@ -1,6 +1,7 @@
 import { v4 as uuid } from 'uuid'
 import Student from '../models/studentData.js'
 import mongoose from 'mongoose'
+import User from '../models/userModel.js'
 
 let users = []
 
@@ -14,13 +15,35 @@ export const getStudent = async (req, res) => {
 }
 // create Student
 export const postStudent = async (req, res) => {
-    const { name, level, email } = req.body
+    const { _id } = req.params
 
-    // users.push({...Student, id:uuid()})
+    const createdBy = _id
+
     try {
-        const student = await Student.create({ name, level, email })
+        if (!req.file) {
+            return res.status(400).json({ message: 'Picture is required and must be less than 2 MB' });
+        }
+        const { name, level, email, } = req.body
+        if (!createdBy || !mongoose.Types.ObjectId.isValid(createdBy)) {
+            return res.status(400).json({ message: 'Invalid user ID' });
+        }
+        const user = await User.findById(createdBy)
 
-        res.status(200).json(student)
+        if (!user || !user.isAdmin) {
+            console.log(user.isAdmin, user.first_name)
+            return res.status(401).json({ error: 'Unauthorized User' })
+        }
+
+
+        const student = await Student.create({
+            profile: `uploads/${req.file.filename}`,
+            createdBy,
+            name,
+            level,
+            email
+        })
+
+        res.status(201).json(student)
     } catch (err) {
         res.status(400).json({ error: err.message })
     }
