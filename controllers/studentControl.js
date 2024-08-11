@@ -15,9 +15,11 @@ export const getStudent = async (req, res) => {
 }
 // create Student
 export const postStudent = async (req, res) => {
-    const { _id } = req.params
+    const { _id } = req.user
+    
+    const createdBy = _id 
 
-    const createdBy = _id
+    
 
     try {
         if (!req.file) {

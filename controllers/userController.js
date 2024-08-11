@@ -2,11 +2,12 @@ import jwt from "jsonwebtoken"
 import bcrypt from 'bcryptjs'
 import User from "../models/userModel.js"
 import dotenv from 'dotenv'
+import { isAdmin } from "../middleware/mediaUpload.js"
 
 dotenv.config()
 
-const getToken = (id) => {
-    return jwt.sign({ id }, process.env.JWT_SECRET, {
+const getToken = (_id) => {
+    return jwt.sign({ _id}, process.env.JWT_SECRET, {
         expiresIn: '30d'
     })
 }
@@ -16,13 +17,13 @@ export const registerUser = async (req, res) => {
     const { first_name, last_name, email, password, isAdmin } = req.body
     try {
         if (!first_name || !last_name || !email || !password) {
-            res.status(400).json({ error: "Please enter all entries" })
+            return res.status(400).json({ error: "Please enter all entries" })
         }
         // check if user exists
 
         const userExists = await User.findOne({ email })
         if (userExists) {
-            res.status(400).json({ error: "User already exists" })
+            return res.status(400).json({ error: "User already exists" })
         }
 
         // hash password
@@ -47,7 +48,9 @@ export const registerUser = async (req, res) => {
 
 
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        console.log(error.message)
+        res.status(400).json({ error: "Can't create user" })
+
     }
 
 }
@@ -60,14 +63,15 @@ export const loginUser = async (req, res) => {
         const user = await User.findOne({ email })
 
         if (user && (await bcrypt.compare(password, user.password))) {
-            res.json({
+            return res.json({
                 name: user.first_name,
                 email: user.email,
                 id: user._id,
+                isAdmin: user.isAdmin,
                 token: getToken(user._id)
             })
         } else {
-            res.status(400).json({ error: 'Invalid email or password' })
+            return res.status(400).json({ error: 'Invalid email or password' })
         }
 
     } catch (error) {
@@ -82,7 +86,7 @@ export const loginUser = async (req, res) => {
 
 export const getMe = async (req, res) => {
     try {
-        const { _id } = req.params;
+        const { _id } = req.user;
 
         // Correct usage of findById
         const user = await User.findById(_id);
@@ -104,10 +108,10 @@ export const getUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        res.json({name: user.first_name,email: user.email});
+        res.json({ name: user.first_name, email: user.email });
     }
-        catch (error) {
-            console.error(error);
-            res.status(500).json({ message: 'Server error' });
-        }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
 }

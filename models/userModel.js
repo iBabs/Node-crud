@@ -44,6 +44,7 @@ const userSchema = new Schema({
         }
 
         const user = new User({first_name, last_name, email, password})
+        await user.save()
     }
 
 const User = mongoose.model('User', userSchema)

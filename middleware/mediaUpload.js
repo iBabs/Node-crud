@@ -32,11 +32,13 @@ const upload = multer({
 
 
 export const isAdmin = async (req, res, next) => {
+
+    // console.log(req.user)
     
         try {
-            const userId = req.params._id; 
+            const userId = req.user._id; 
             
-                console.log(userId)
+                // console.log(userId)
             // Check if userId is a valid ObjectId
             if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
                 return res.status(400).json({ message: 'Invalid user ID' });
@@ -45,7 +47,7 @@ export const isAdmin = async (req, res, next) => {
             const user = await User.findById(userId);
     
             if (!user) {
-                return res.status(404).json({ message: 'User not found' });
+                return res.status(404).json({ message: 'Unathorized user' });
             }
     
             if (!user.isAdmin) {

@@ -9,7 +9,7 @@ userRouter.post('/register', registerUser)
 
 userRouter.post('/login', loginUser)
 
-userRouter.get('/me/:_id',protect, getMe)
+userRouter.get('/me',protect, getMe)
 
 userRouter.get('/person/:_id', getUser)
 
